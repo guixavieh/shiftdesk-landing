@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="ShiftDesk is a concept B2B SaaS for IT asset management: inventory, assignments and offboarding in one workspace. A portfolio case study by Guilherme.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234F46E5'/%3E%3Cpath d='M16 8l8 4.5-8 4.5-8-4.5z M8 18l8 4.5 8-4.5' fill='none' stroke='white' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>ShiftDesk</title>
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one light marketing page, full-width bands (announcement, nav, dark Product, photo strip, footer)
+   each with a centered 1240px inner wrapper. Geist for text, Geist Mono for the small labels above section titles.
+   A deliberate single light look, like the Figma file, so every color is set explicitly. */
+:root {
+  --bg: #FFFFFF;
+  --ink: #0F1222;
+  --muted: #5B6075;
+  --line: #E5E7F0;
+  --lav: #F5F4FF;
+  --brand: #4F46E5;
+  --brand-dk: #3F37C9;
+  --navy: #0A0B2A;
+  --sans: "Geist", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans);
+  font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: #fff; z-index: 60; }
+a { color: inherit; }
+section[id] { scroll-margin-top: 72px; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.in { max-width: 1240px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* announcement bar */
+.bar { background: var(--brand); color: #fff; font-size: 13px; overflow: hidden; max-height: 48px; transition: max-height .35s ease; }
+.bar.gone { max-height: 0; }
+.bar .in { position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 40px; padding-block: 4px; text-align: center; }
+.bar a { font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.bar a:hover { text-decoration: underline; }
+.bar button { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border: 0; border-radius: 50%; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; display: grid; place-items: center; }
+.bar button:hover { background: rgba(255,255,255,.3); }
+.bar button svg { width: 12px; height: 12px; }
+.bar .in { padding-right: 48px; padding-left: 48px; }
+
+/* nav */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); transition: box-shadow .25s ease; }
+.nav.scrolled { box-shadow: 0 8px 28px rgba(15,18,34,.07); }
+.nav .in { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+.logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; font-size: 18px; letter-spacing: -.02em; text-decoration: none; }
+.mark { width: 30px; height: 30px; border-radius: 8px; background: var(--brand); color: #fff; display: grid; place-items: center; flex: none; }
+.mark svg { width: 16px; height: 16px; }
+.links { display: flex; gap: 30px; }
+.links a { position: relative; color: var(--muted); text-decoration: none; font-size: 14px; padding: 6px 0; transition: color .15s; }
+.links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--brand); transform: scaleX(0); transform-origin: left; transition: transform .22s ease; }
+.links a:hover, .links a.on { color: var(--ink); }
+.links a:hover::after, .links a.on::after { transform: scaleX(1); }
+.actions { display: flex; gap: 8px; }
+
+.btn { font: inherit; font-size: 14px; font-weight: 550; border-radius: 9px; padding: 9px 16px; border: 1px solid var(--line); background: #fff; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: background .15s, border-color .15s, transform .15s, box-shadow .15s; }
+.btn:hover { border-color: #C6C9E0; transform: translateY(-1px); }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+.btn.primary:hover { background: var(--brand-dk); border-color: var(--brand-dk); box-shadow: 0 8px 20px rgba(79,70,229,.32); }
+.btn.lg { padding: 12px 20px; font-size: 15px; }
+
+/* section heads: mono label, title left, description right */
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--brand); font-weight: 500; }
+.sec { padding-block: 96px; }
+.head { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 64px; align-items: end; margin-bottom: 44px; }
+.head h2 { margin: 10px 0 0; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1; letter-spacing: -.03em; font-weight: 550; text-wrap: balance; max-width: 14em; }
+.head p { margin: 0; color: var(--muted); max-width: 46ch; justify-self: end; }
+
+/* hero */
+.hero { padding-top: 76px; padding-bottom: 72px; text-align: center; }
+.hero h1 { margin: 20px auto 0; font-size: clamp(38px, 6.3vw, 76px); line-height: 1.02; letter-spacing: -.045em; font-weight: 500; max-width: 920px; text-wrap: balance; }
+.hero .sub { margin: 22px auto 0; max-width: 54ch; color: var(--muted); font-size: clamp(16px, 1.6vw, 18px); }
+.cta-row { display: flex; gap: 10px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
+.hv { position: relative; margin-top: 72px; padding-bottom: 6%; }
+.hv-bg { position: absolute; left: 0; right: 0; bottom: 0; aspect-ratio: 2.1 / 1; border-radius: 32px; overflow: hidden;
+  background: radial-gradient(circle at 0% 100%, #0B1236 0%, rgba(11,18,54,0) 55%), linear-gradient(115deg, #1F3FD6 0%, #4F46E5 48%, #8F82F7 100%); }
+.hv img { position: relative; display: block; width: 63%; margin-inline: auto; height: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,.5);
+  box-shadow: 0 40px 90px rgba(10,11,42,.38); transform: translateY(var(--py, 0px)); will-change: transform; background: #fff; }
+.rise { animation: rise .85s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+/* scroll reveal: starts from a small offset and fades in once */
+.js .rv { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0ms); }
+.js .rv.shown { opacity: 1; transform: none; }
+
+/* problem */
+.cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.pcard { border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; background: #fff; transition: transform .25s ease, box-shadow .25s ease, border-color .25s; }
+.pcard:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(15,18,34,.08); border-color: #D5D7EA; }
+.pcard h3 { margin: 0 0 8px; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.pcard p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+/* product (dark) */
+.dark { background: radial-gradient(900px 420px at 85% 0%, #1B1D72 0%, rgba(27,29,114,0) 62%), linear-gradient(180deg, #0A0B2A 0%, #0C0E3A 100%); color: #fff; }
+.dark .eyebrow { color: #B3AEFF; }
+.dark .head p { color: #C3C7E6; }
+.prod { display: grid; grid-template-columns: 5fr 6fr; gap: 64px; align-items: center; }
+.acc { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(255,255,255,.16); }
+.acc li { position: relative; border-bottom: 1px solid rgba(255,255,255,.16); }
+.acc .pb { position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: transparent; }
+.acc .pb i { display: block; height: 100%; width: 0; background: #8E86FF; }
+.acc li.active .pb { background: rgba(255,255,255,.16); }
+.acc li.active .pb i { animation: fill var(--dur, 6s) linear forwards; }
+.acc.paused li.active .pb i { animation-play-state: paused; }
+.acc.static li.active .pb i { animation: none; width: 100%; }
+@keyframes fill { to { width: 100%; } }
+.acc button { width: 100%; text-align: left; background: none; border: 0; padding: 20px 0; cursor: pointer; font: inherit; color: #AEB3DD; transition: color .2s, padding .3s ease; }
+.acc button:hover { color: #fff; }
+.acc .t { display: flex; gap: 14px; align-items: baseline; font-size: 19px; font-weight: 500; letter-spacing: -.015em; }
+.acc .n { font-family: var(--mono); font-size: 13px; color: #A5A0FF; }
+.acc li.active button { color: #fff; padding-bottom: 6px; }
+.acc .d { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s ease; }
+.acc .d > div { overflow: hidden; }
+.acc li.active .d { grid-template-rows: 1fr; }
+.acc .d p { margin: 0 0 22px 30px; color: #C9CDEC; font-size: 15px; max-width: 46ch; }
+.pframe { position: relative; border-radius: 28px; background: #D9D6FF; aspect-ratio: 1.32 / 1; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,.35); }
+.slide { position: absolute; inset: 0; opacity: 0; transition: opacity .55s ease; padding: 7% 7% 0; pointer-events: none; }
+.slide.on { opacity: 1; }
+.slide img { display: block; width: 100%; height: auto; border-radius: 12px 12px 0 0; box-shadow: 0 18px 50px rgba(10,11,42,.25); background: #fff; }
+.slide.full { padding: 0; }
+.slide.full img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; box-shadow: none; }
+
+/* use cases strip */
+.mq { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; cursor: grab; padding: 56px max(16px, env(safe-area-inset-right, 0px)) 56px max(16px, env(safe-area-inset-left, 0px)); -webkit-overflow-scrolling: touch; }
+.mq::-webkit-scrollbar { display: none; }
+.mq.drag { cursor: grabbing; user-select: none; }
+.uc { flex: none; width: clamp(230px, 22vw, 300px); aspect-ratio: .72 / 1; border-radius: 18px; position: relative; overflow: hidden; color: #fff; margin: 0; background: #14163F; }
+.uc .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
+.uc:hover .ph { transform: scale(1.06); }
+.uc::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,9,30,0) 40%, rgba(8,9,30,.78) 100%); }
+.uc figcaption { position: absolute; z-index: 1; left: 20px; right: 20px; bottom: 18px; font-size: clamp(19px, 1.7vw, 23px); font-weight: 550; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
+
+/* how it works */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.art { aspect-ratio: 1.5 / 1; border-radius: 18px; background: linear-gradient(180deg, #F4F3FF 0%, #E7E5FF 100%); overflow: hidden; }
+.art img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.2,.7,.2,1); }
+.step:hover .art img { transform: scale(1.04); }
+.step h3 { margin: 18px 0 6px; font-size: 19px; font-weight: 600; letter-spacing: -.02em; }
+.step p { margin: 0; color: var(--muted); font-size: 15px; max-width: 38ch; }
+
+/* white label */
+.stage { --brand: #4F46E5; border: 1px solid var(--line); border-radius: 24px; padding: 12px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 12px; background: #fff; }
+.panel { background: var(--lav); border: 1px solid var(--line); border-radius: 14px; padding: 40px 36px; display: flex; flex-direction: column; gap: 28px; min-width: 0; }
+.panel h2 { margin: 12px 0 0; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.08; letter-spacing: -.035em; font-weight: 550; }
+.panel .lede { margin: 14px 0 0; color: var(--muted); max-width: 40ch; }
+.controls { display: flex; flex-direction: column; gap: 22px; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.label { font-size: 14px; font-weight: 600; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.count { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; font-family: var(--mono); }
+.stage input[type="text"] { width: 100%; font: inherit; font-size: 15px; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; transition: border-color .15s, box-shadow .15s; }
+.stage input[type="text"]::placeholder { color: #8A8FA6; }
+.stage input[type="text"]:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 16%, transparent); }
+.logo-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.logo-box { width: 52px; height: 52px; border-radius: 12px; flex: none; overflow: hidden; display: grid; place-items: center; color: #fff; background: var(--brand); font-weight: 700; font-size: 22px; transition: background .2s; }
+.logo-box img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.logo-box svg { width: 26px; height: 26px; }
+.sbtn { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; cursor: pointer; }
+.sbtn:hover { border-color: var(--brand); }
+.file { position: relative; display: inline-block; }
+.file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.file:focus-within { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 9px; }
+.hint { margin: 0; font-size: 12px; color: var(--muted); }
+.hint.err { color: #B42318; }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.sw { width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer; background: var(--c); box-shadow: inset 0 0 0 2px rgba(255,255,255,.35); transition: transform .15s; }
+.sw:hover { transform: scale(1.08); }
+.sw[aria-checked="true"] { outline: 2px solid var(--ink); outline-offset: 3px; }
+.stage .btn.primary { background: var(--brand); border-color: var(--brand); align-self: flex-start; transition: background .2s, box-shadow .15s, transform .15s; }
+.stage .btn.primary:hover { background: color-mix(in srgb, var(--brand) 85%, black); border-color: transparent; }
+.stage .eyebrow { color: var(--brand); transition: color .2s; }
+.view { min-width: 0; display: flex; align-items: stretch; }
+.pv-frame { width: 100%; border-radius: 14px; overflow: hidden; background: var(--brand); position: relative; padding: 0; transition: background .2s; }
+.pv-inner { width: 940px; transform-origin: top left; color: #0F1222; background: #FAFAFC; font-size: 13px; line-height: 1.4; position: absolute; left: 0; top: 0; border-radius: 10px 0 0 0; overflow: hidden; }
+.chrome { display: flex; align-items: center; gap: 10px; background: #EEF0F6; padding: 9px 14px; border-bottom: 1px solid #E6E8F0; }
+.dots { display: flex; gap: 6px; } .dots i { width: 10px; height: 10px; border-radius: 50%; background: #CDD1DE; }
+.url { flex: 1; max-width: 360px; background: #fff; border-radius: 6px; padding: 3px 10px; font-size: 11px; color: #6A6F84; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app { display: grid; grid-template-columns: 196px 1fr; min-height: 560px; }
+.side { background: #fff; border-right: 1px solid #E6E8F0; padding: 18px 12px; display: flex; flex-direction: column; gap: 4px; }
+.brandrow { display: flex; align-items: center; gap: 9px; padding: 0 6px 16px; font-weight: 700; font-size: 16px; letter-spacing: -.01em; }
+.brandrow .logo-box { width: 28px; height: 28px; border-radius: 8px; font-size: 14px; }
+.brandrow .logo-box svg { width: 15px; height: 15px; }
+.brandrow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.grp { font-size: 10px; font-weight: 600; letter-spacing: .08em; color: #6A6F84; padding: 12px 8px 4px; text-transform: uppercase; }
+.nv { display: flex; align-items: center; gap: 9px; padding: 7px 8px; border-radius: 8px; color: #3A3F55; font-weight: 500; }
+.nv .ic { width: 16px; height: 16px; flex: none; }
+.nv.on { background: color-mix(in srgb, var(--brand) 11%, white); color: var(--brand); }
+.nv em { margin-left: auto; font-style: normal; font-size: 10px; background: #EEF0F6; color: #6A6F84; border-radius: 6px; padding: 1px 6px; }
+.who { margin-top: auto; border-top: 1px solid #E6E8F0; padding: 12px 6px 0; font-size: 12px; }
+.who b { display: block; } .who .sm { color: #6A6F84; font-size: 11px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pmain { min-width: 0; display: flex; flex-direction: column; }
+.top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #E6E8F0; }
+.search { flex: 1; display: flex; align-items: center; gap: 8px; color: #6A6F84; font-size: 12px; }
+.search .ic { width: 15px; height: 15px; }
+.pcta { background: var(--brand); color: #fff; font-weight: 600; font-size: 12px; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 6px; }
+.pcta .ic { width: 14px; height: 14px; }
+.content { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.content h3.pt { margin: 0; font-size: 22px; letter-spacing: -.02em; }
+.content p.ps { margin: 2px 0 0; color: #6A6F84; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.pc { background: #fff; border: 1px solid #E6E8F0; border-radius: 10px; padding: 12px 14px; }
+.kpi small { color: #6A6F84; display: block; font-size: 11px; }
+.kpi strong { display: block; font-size: 26px; letter-spacing: -.02em; line-height: 1.2; margin: 2px 0; font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 11px; color: #6A6F84; }
+.kpi .up { color: var(--brand); font-weight: 600; } .kpi .warn { color: #B45309; }
+.split { display: grid; grid-template-columns: 1.6fr 1fr; gap: 10px; }
+.pc h4 { margin: 0; font-size: 13px; } .pc .sub2 { color: #6A6F84; font-size: 11px; margin-bottom: 8px; }
+.legend { display: flex; gap: 12px; font-size: 10px; color: #6A6F84; margin-bottom: 4px; }
+.legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+svg.chart { width: 100%; height: auto; display: block; }
+svg.chart text { font-size: 10px; fill: #6A6F84; font-family: var(--sans); }
+.cat { display: flex; flex-direction: column; gap: 9px; margin-top: 4px; }
+.cat b { display: flex; justify-content: space-between; font-weight: 500; font-size: 12px; }
+.bar2 { height: 5px; border-radius: 3px; background: #CBD0DC; margin-top: 4px; overflow: hidden; display: flex; }
+.bar2 i { background: var(--brand); height: 100%; } .bar2 u { background: color-mix(in srgb, var(--brand) 40%, white); height: 100%; margin-left: auto; width: 12%; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { text-align: left; color: #6A6F84; font-weight: 500; font-size: 11px; padding: 6px 4px; border-bottom: 1px solid #E6E8F0; }
+td { padding: 8px 4px; border-bottom: 1px solid #E6E8F0; } tr:last-child td { border-bottom: 0; }
+td small { display: block; color: #6A6F84; font-size: 11px; }
+.pill { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.pill.w { background: #FEF3E2; color: #B45309; } .pill.i { background: #E6EEFF; color: #1D4ED8; } .pill.g { background: #EEF0F6; color: #4A4F66; }
+.lk { color: var(--brand); font-weight: 600; }
+
+/* contact */
+.contact { display: grid; grid-template-columns: 5fr 7fr; gap: 56px; align-items: start; }
+.contact h2 { margin: 10px 0 0; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1; letter-spacing: -.03em; font-weight: 550; text-wrap: balance; }
+.contact .lede { margin: 16px 0 0; color: var(--muted); max-width: 40ch; }
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.f { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.f.full { grid-column: 1 / -1; }
+.f label, .f .lab { font-size: 14px; font-weight: 500; }
+.f .opt { color: var(--muted); font-weight: 400; }
+.f input, .f select, .f textarea { font: inherit; font-size: 15px; color: var(--ink); width: 100%; border: 1px solid var(--line); background: #F7F7FB; border-radius: 10px; padding: 12px 14px; transition: border-color .15s, background .15s, box-shadow .15s; }
+.f textarea { min-height: 120px; resize: vertical; }
+.f input::placeholder, .f textarea::placeholder { color: #8A8FA6; }
+.f select { appearance: none; -webkit-appearance: none; padding-right: 40px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B6075' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+.f input:focus, .f select:focus, .f textarea:focus { outline: none; border-color: var(--brand); background-color: #fff; box-shadow: 0 0 0 4px rgba(79,70,229,.14); }
+.f.bad input, .f.bad select, .f.bad textarea { border-color: #D92D20; }
+.msg { display: none; font-size: 13px; color: #B42318; }
+.f.bad .msg { display: block; animation: fade .25s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+.agree { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.agree input { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; flex: none; margin: 0; padding: 0; border: 1.5px solid #B6BBCB; border-radius: 6px; background: #fff; cursor: pointer; transition: background-color .15s, border-color .15s; }
+.agree input:hover { border-color: #8F95AA; }
+.agree input:checked { background: var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 13px no-repeat; border-color: var(--brand); }
+.agree input:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.f.bad .agree input { border-color: #D92D20; }
+.agree a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+.sendrow { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.done { display: none; border: 1px solid var(--line); background: var(--lav); border-radius: 16px; padding: 32px; animation: fade .4s ease; }
+.done.show { display: block; }
+.done h3 { margin: 0 0 8px; font-size: 24px; letter-spacing: -.02em; font-weight: 550; }
+.done p { margin: 0 0 20px; color: var(--muted); max-width: 46ch; }
+
+/* footer */
+.foot { padding-block: 24px 48px; }
+.fcard { border: 2px solid #6A5FEC; border-radius: 24px; overflow: hidden; background: #fff; }
+.ftop { padding: 36px 40px; display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+.ftop p { margin: 14px 0 0; color: var(--muted); }
+.soc { display: flex; gap: 10px; }
+.soc a { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 9px; display: grid; place-items: center; color: var(--ink); transition: background .15s, color .15s, border-color .15s, transform .15s; }
+.soc a:hover { background: var(--brand); color: #fff; border-color: var(--brand); transform: translateY(-2px); }
+.soc svg { width: 17px; height: 17px; }
+.fbot { background: #5B4FE9; color: #fff; padding: 18px 40px; display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; font-size: 14px; }
+.fbot nav { display: flex; gap: 20px; }
+.fbot a { color: #fff; text-decoration: none; transition: opacity .15s; }
+.fbot a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 960px) {
+  .sec { padding-block: 72px; }
+  .head { grid-template-columns: 1fr; gap: 14px; }
+  .head p { justify-self: start; }
+  .prod { grid-template-columns: 1fr; gap: 36px; }
+  .stage { grid-template-columns: minmax(0, 1fr); }
+  .panel { padding: 28px 22px; }
+  .contact { grid-template-columns: 1fr; gap: 32px; }
+  .links { display: none; }
+}
+@media (max-width: 760px) {
+  .cards3, .steps { grid-template-columns: 1fr; }
+  .hv { margin-top: 48px; }
+  .hv img { width: 88%; }
+  .hv-bg { aspect-ratio: 1.5 / 1; border-radius: 22px; }
+  .hero { padding-top: 48px; }
+}
+@media (max-width: 560px) {
+  .fgrid { grid-template-columns: 1fr; }
+  .actions .btn:last-child { display: none; }
+  .ftop, .fbot { padding-left: 22px; padding-right: 22px; }
+  .bar .in { padding-left: 16px; padding-right: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rise { animation: none; }
+  .js .rv { opacity: 1; transform: none; transition: none; }
+  * { transition-duration: .01ms !important; }
+}
+[hidden] { display: none !important; }
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5z M3 8l9 5 9-5 M12 13v8"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+    <symbol id="i-laptop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 20h20"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z M14 3v5h5"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2 6h11v10H2z M13 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M14 6a4 4 0 0 0 5 5l-9 9a2 2 0 0 1-3-3z"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7 M3 4v5h5 M12 7v5l3 2"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10 M10 20V4 M16 20v-8 M22 20H2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3l9 5-9 5-9-5z M3 13l9 5 9-5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14 M5 12h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12 M18 6L6 18"/></symbol>
+  </defs>
+</svg>
+
+<!-- announcement -->
+<div class="bar" id="bar">
+  <div class="in">
+    <span>Want to test the system?</span>
+    <a href="#contact">Get in touch <svg width="14" height="14"><use href="#i-arrow"/></svg></a>
+    <button type="button" id="bar-close" aria-label="Dismiss announcement"><svg><use href="#i-x"/></svg></button>
+  </div>
+</div>
+
+<!-- nav -->
+<header class="nav" id="nav">
+  <div class="in">
+    <a class="logo" href="#top"><span class="mark"><svg><use href="#i-layers"/></svg></span>ShiftDesk</a>
+    <nav class="links" aria-label="Sections">
+      <a href="#product" data-spy="product">Product</a>
+      <a href="#how-it-works" data-spy="how-it-works">How it works</a>
+      <a href="#white-label" data-spy="white-label">White Label</a>
+      <a href="#contact" data-spy="contact">Contact</a>
+    </nav>
+    <div class="actions">
+      <a class="btn primary" href="#contact">Request a demo</a>
+      <a class="btn" href="https://www.linkedin.com/in/guipx/" data-li>Sign in</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<!-- hero -->
+<section class="hero">
+  <div class="in">
+    <span class="eyebrow rise" style="--d:0ms">IT asset management for growing teams</span>
+    <h1 class="rise" style="--d:90ms">A clear view of your assets, wherever your team works.</h1>
+    <p class="sub rise" style="--d:180ms">ShiftDesk helps small and mid-sized companies track every laptop, monitor and phone, know who has it, and get it back when someone leaves.</p>
+    <div class="cta-row rise" style="--d:270ms">
+      <a class="btn primary lg" href="#contact">Request a demo</a>
+      <a class="btn lg" href="#how-it-works">See how it works</a>
+    </div>
+    <div class="hv rise" style="--d:380ms" id="hv">
+      <div class="hv-bg" aria-hidden="true"></div>
+      <img id="hero-img" src="img/overview.webp" width="1800" height="1519" alt="ShiftDesk Overview screen with asset KPIs, an allocation chart and recent offboarding requests">
+    </div>
+  </div>
+</section>
+
+<!-- problem -->
+<section class="sec" style="padding-top:40px">
+  <div class="in">
+    <div class="head rv">
+      <div><span class="eyebrow">The problem</span><h2>Spreadsheets were never meant to track hardware.</h2></div>
+      <p>As a team grows, devices change hands faster than anyone can keep up with.</p>
+    </div>
+    <div class="cards3">
+      <article class="pcard rv" style="--d:0ms"><h3>Lost track</h3><p>Devices go missing after someone leaves, and nobody knows where they ended up.</p></article>
+      <article class="pcard rv" style="--d:100ms"><h3>No history</h3><p>When there's a question about who had what, the answer lives in someone's memory.</p></article>
+      <article class="pcard rv" style="--d:200ms"><h3>Chasing updates</h3><p>HR asks IT, IT asks the employee, and the status never reaches one place.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- product -->
+<section class="dark sec" id="product">
+  <div class="in">
+    <div class="head rv">
+      <div><span class="eyebrow">Product</span><h2>Everything you need to manage your fleet.</h2></div>
+      <p>Track what you own, know who has it and bring it back when it's time, all from one workspace that keeps growing with your team.</p>
+    </div>
+    <div class="prod rv" id="prod">
+      <ol class="acc" id="acc">
+        <li class="active"><span class="pb"><i></i></span>
+          <button type="button" aria-expanded="true"><span class="t"><span class="n">01</span>Overview</span></button>
+          <div class="d"><div><p>Total assets, what's in use, what's in stock and what needs attention, all on one screen. Track allocation and net book value over time, and export a report whenever you need one.</p></div></div></li>
+        <li><span class="pb"><i></i></span>
+          <button type="button" aria-expanded="false"><span class="t"><span class="n">02</span>Inventory</span></button>
+          <div class="d"><div><p>Every laptop, monitor, peripheral and phone in a single searchable catalog. Find any asset by tag, serial number or model, filter by category, and see its status and owner at a glance.</p></div></div></li>
+        <li><span class="pb"><i></i></span>
+          <button type="button" aria-expanded="false"><span class="t"><span class="n">03</span>Offboarding</span></button>
+          <div class="d"><div><p>Start a return when someone leaves, follow it from reminder to shipping label to inspection, and close it only when the equipment is received. HR and IT see the same status, so nobody has to ask.</p></div></div></li>
+        <li><span class="pb"><i></i></span>
+          <button type="button" aria-expanded="false"><span class="t"><span class="n">04</span>Coming soon</span></button>
+          <div class="d"><div><p>Assigned Devices, Custody Terms, Shipping, Maintenance, Audit Logs and Analytics are next.</p></div></div></li>
+      </ol>
+      <div class="pframe" id="pframe">
+        <div class="slide on"><img src="img/overview.webp" width="1800" height="1519" alt="Overview screen" loading="lazy"></div>
+        <div class="slide"><img src="img/inventory.webp" width="1800" height="1435" alt="Inventory screen with the hardware catalog table" loading="lazy"></div>
+        <div class="slide"><img src="img/offboarding.webp" width="1800" height="1435" alt="Offboarding Management screen with return requests" loading="lazy"></div>
+        <div class="slide full"><img src="img/modules.webp" width="1600" height="1204" alt="The Overview, Inventory and Offboarding screens shown together at an angle" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- use cases strip -->
+<section aria-label="Use cases">
+  <div class="mq" id="mq">
+    <figure class="uc"><img class="ph" src="img/built-for-remote-teams.webp" width="720" height="1008" alt="" decoding="async"><figcaption>Built for remote teams</figcaption></figure>
+    <figure class="uc"><img class="ph" src="img/ready-for-day-one.webp" width="720" height="1008" alt="" decoding="async"><figcaption>Ready for day one</figcaption></figure>
+    <figure class="uc"><img class="ph" src="img/smooth-employee-exit-process.webp" width="720" height="1008" alt="" decoding="async"><figcaption>Smooth employee exit process</figcaption></figure>
+    <figure class="uc"><img class="ph" src="img/spare-stock-always-visible.webp" width="720" height="1008" alt="" decoding="async"><figcaption>Spare stock, always visible</figcaption></figure>
+    <figure class="uc"><img class="ph" src="img/track-every-device-repair.webp" width="720" height="1008" alt="" decoding="async"><figcaption>Track every device repair</figcaption></figure>
+    <figure class="uc"><img class="ph" src="img/always-ready-for-audits.webp" width="720" height="1008" alt="" decoding="async"><figcaption>Always ready for audits</figcaption></figure>
+    <figure class="uc"><img class="ph" src="img/plan-renewals-with-confidence.webp" width="720" height="1008" alt="" decoding="async"><figcaption>Plan renewals with confidence</figcaption></figure>
+    <figure class="uc"><img class="ph" src="img/tracked-shipping-and-returns.webp" width="720" height="1008" alt="" decoding="async"><figcaption>Tracked shipping and returns</figcaption></figure>
+  </div>
+</section>
+
+<!-- how it works -->
+<section class="sec" id="how-it-works" style="padding-top:40px">
+  <div class="in">
+    <div class="head rv">
+      <div><span class="eyebrow">How it works</span><h2>From first device to final return in three steps.</h2></div>
+      <p>ShiftDesk follows the life of every device, so nothing falls through the cracks.</p>
+    </div>
+    <div class="steps">
+      <article class="step rv" style="--d:0ms">
+        <div class="art"><img src="img/register-your-assets.webp" width="1200" height="800" alt="" loading="lazy" decoding="async"></div>
+        <h3>Register your assets</h3>
+        <p>Add devices one by one or in bulk, each with a tag, serial number and specs.</p>
+      </article>
+      <article class="step rv" style="--d:120ms">
+        <div class="art"><img src="img/assign-to-your-team.webp" width="1200" height="800" alt="" loading="lazy" decoding="async"></div>
+        <h3>Assign to your team</h3>
+        <p>Link every device to an employee and keep custody on record from day one.</p>
+      </article>
+      <article class="step rv" style="--d:240ms">
+        <div class="art"><img src="img/recover-at-exit.webp" width="1200" height="800" alt="" loading="lazy" decoding="async"></div>
+        <h3>Recover at exit</h3>
+        <p>Start an offboarding request, track the return and close it with confidence.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- white label -->
+<section class="sec" id="white-label" style="padding-top:24px">
+  <div class="in">
+    <div class="stage rv" id="stage">
+      <div class="panel">
+        <div>
+          <span class="eyebrow">White label</span>
+          <h2>Your brand.<br>Your workspace.</h2>
+          <p class="lede">ShiftDesk adapts to your company: your logo, your colors and your name on the product your team uses every day.</p>
+        </div>
+        <div class="controls">
+          <div class="field">
+            <span class="label" id="logo-label">Workspace logo</span>
+            <div class="logo-row">
+              <div class="logo-box" id="logo-preview" aria-hidden="true"><svg><use href="#i-layers"/></svg></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <label class="file sbtn" for="logo-input">Upload logo<input type="file" id="logo-input" accept="image/png,image/jpeg,image/svg+xml,image/webp" aria-labelledby="logo-label"></label>
+                <button type="button" class="sbtn" id="logo-remove" hidden>Remove</button>
+              </div>
+            </div>
+            <p class="hint" id="logo-hint">PNG, JPG, SVG or WebP up to 2 MB. Your logo stays in your browser and is never uploaded.</p>
+          </div>
+          <div class="field">
+            <div class="row"><label class="label" for="name-input">Name</label><span class="count" id="count">0/20</span></div>
+            <input type="text" id="name-input" maxlength="20" placeholder="Name of your workspace" autocomplete="off">
+          </div>
+          <div class="field">
+            <span class="label" id="color-label">Brand color</span>
+            <div class="swatches" role="radiogroup" aria-labelledby="color-label" id="swatches"></div>
+          </div>
+        </div>
+        <a class="btn primary" href="#contact">Request a demo</a>
+      </div>
+      <div class="view">
+        <div class="pv-frame" id="frame">
+          <div class="pv-inner" id="inner" aria-label="Live preview of the Overview screen">
+            <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url" id="url">app.shiftdesk.com</div></div>
+            <div class="app">
+              <aside class="side">
+                <div class="brandrow"><div class="logo-box" id="side-logo"><svg><use href="#i-layers"/></svg></div><span data-name>ShiftDesk</span></div>
+                <div class="grp">Workspace</div>
+                <div class="nv on"><svg class="ic"><use href="#i-grid"/></svg>Overview</div>
+                <div class="nv"><svg class="ic"><use href="#i-box"/></svg>Inventory</div>
+                <div class="nv"><svg class="ic"><use href="#i-user"/></svg>Offboarding<em>8</em></div>
+                <div class="nv"><svg class="ic"><use href="#i-laptop"/></svg>Assigned Devices</div>
+                <div class="grp">Operations</div>
+                <div class="nv"><svg class="ic"><use href="#i-doc"/></svg>Custody Terms</div>
+                <div class="nv"><svg class="ic"><use href="#i-truck"/></svg>Shipping</div>
+                <div class="nv"><svg class="ic"><use href="#i-wrench"/></svg>Maintenance</div>
+                <div class="grp">Reports</div>
+                <div class="nv"><svg class="ic"><use href="#i-history"/></svg>Audit Logs</div>
+                <div class="nv"><svg class="ic"><use href="#i-chart"/></svg>Analytics</div>
+                <div class="who"><b>Diego Souza</b><span class="sm">Workspace admin at <span data-name>ShiftDesk</span></span></div>
+              </aside>
+              <div class="pmain">
+                <div class="top"><div class="search"><svg class="ic"><use href="#i-search"/></svg>Search assets, serial numbers, users...</div><div class="pcta"><svg class="ic"><use href="#i-plus"/></svg>Add New Asset</div></div>
+                <div class="content">
+                  <div><h3 class="pt">Overview</h3><p class="ps">A clear view of your assets, wherever your team works.</p></div>
+                  <div class="kpis">
+                    <div class="pc kpi"><small>Total Assets</small><strong>124</strong><span><b class="up">+12</b> vs. previous 30 days</span></div>
+                    <div class="pc kpi"><small>Assigned / In Use</small><strong>98</strong><span><b class="up">79%</b> of total inventory</span></div>
+                    <div class="pc kpi"><small>Available in Stock</small><strong>18</strong><span>Ready for your next hire</span></div>
+                    <div class="pc kpi"><small>Offboarding Pending</small><strong>8</strong><span class="warn">3 requests need attention</span></div>
+                  </div>
+                  <div class="split">
+                    <div class="pc">
+                      <h4>Asset Allocation &amp; Depreciation</h4>
+                      <div class="sub2">Inventory growth and net book value over time</div>
+                      <div class="legend"><span><i style="background:var(--brand)"></i>Assigned</span><span><i style="background:#CBD0DC"></i>In stock</span><span><i style="background:color-mix(in srgb,var(--brand) 40%,white)"></i>Offboarding</span></div>
+                      <svg class="chart" id="chart" viewBox="0 0 560 190" role="img" aria-label="Bar chart of assets by status, June to November, with a net book value line"></svg>
+                    </div>
+                    <div class="pc">
+                      <h4>Status by Category</h4>
+                      <div class="sub2">124 assets across 4 categories</div>
+                      <div class="cat">
+                        <div><b>Laptops<span>78</span></b><div class="bar2"><i style="width:78%"></i><u></u></div></div>
+                        <div><b>Monitors<span>26</span></b><div class="bar2"><i style="width:80%"></i><u></u></div></div>
+                        <div><b>Peripherals<span>12</span></b><div class="bar2"><i style="width:62%"></i><u></u></div></div>
+                        <div><b>Mobile devices<span>8</span></b><div class="bar2"><i style="width:60%"></i><u></u></div></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pc">
+                    <h4 style="margin-bottom:4px">Recent Offboarding Requests</h4>
+                    <table>
+                      <thead><tr><th>Employee</th><th>Asset</th><th>Requested</th><th>Status</th><th>Action</th></tr></thead>
+                      <tbody>
+                        <tr><td>Olivia Rhye<small>olivia@acme.com</small></td><td>MacBook Pro 14"<small>SD-MBP-0042</small></td><td>Nov 04, 2026</td><td><span class="pill w">Awaiting return</span></td><td class="lk">Send reminder</td></tr>
+                        <tr><td>Phoenix Baker<small>phoenix@acme.com</small></td><td>Dell Latitude 7440<small>SD-DEL-0018</small></td><td>Nov 03, 2026</td><td><span class="pill i">In transit</span></td><td class="lk">Track shipment</td></tr>
+                        <tr><td>Lana Steiner<small>lana@acme.com</small></td><td>MacBook Air M2<small>SD-MBA-0036</small></td><td>Nov 03, 2026</td><td><span class="pill w">Awaiting return</span></td><td class="lk">Send reminder</td></tr>
+                        <tr><td>Demi Wilkinson<small>demi@acme.com</small></td><td>Lenovo ThinkPad X1<small>SD-LEN-0009</small></td><td>Nov 02, 2026</td><td><span class="pill g">Label created</span></td><td class="lk">View request</td></tr>
+                        <tr><td>Orlando Diggs<small>orlando@acme.com</small></td><td>Dell Latitude 5440<small>SD-DEL-0021</small></td><td>Nov 01, 2026</td><td><span class="pill i">In transit</span></td><td class="lk">Track shipment</td></tr>
+                        <tr><td>Andi Lane<small>andi@acme.com</small></td><td>MacBook Air M2<small>SD-MBA-0038</small></td><td>Oct 31, 2026</td><td><span class="pill w">Awaiting return</span></td><td class="lk">Send reminder</td></tr>
+                        <tr><td>Kate Morrison<small>kate@acme.com</small></td><td>Lenovo ThinkPad X1<small>SD-LEN-0011</small></td><td>Oct 30, 2026</td><td><span class="pill i">In transit</span></td><td class="lk">Track shipment</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- contact -->
+<section class="sec" id="contact" style="padding-top:24px">
+  <div class="in">
+    <div class="contact">
+      <div class="rv">
+        <span class="eyebrow">Contact</span>
+        <h2>Let's talk about your fleet.</h2>
+        <p class="lede">Tell us about your team and the devices you manage, and we'll show you how ShiftDesk fits.</p>
+      </div>
+      <div class="rv" style="--d:100ms">
+        <form id="form" class="fgrid" novalidate>
+          <div class="f" data-f="fn"><label for="fn">First Name</label><input id="fn" name="fn" type="text" placeholder="Jane" autocomplete="given-name"><span class="msg" role="alert"></span></div>
+          <div class="f" data-f="em"><label for="em">Email Address</label><input id="em" name="em" type="email" placeholder="jane@company.com" autocomplete="email"><span class="msg" role="alert"></span></div>
+          <div class="f full" data-f="co"><label for="co">Company name</label><input id="co" name="co" type="text" placeholder="Acme Inc." autocomplete="organization"><span class="msg" role="alert"></span></div>
+          <div class="f" data-f="ph"><label for="ph">Phone Number <span class="opt">(optional)</span></label><input id="ph" name="ph" type="tel" placeholder="+000" autocomplete="tel"></div>
+          <div class="f" data-f="ts"><label for="ts">Team size</label>
+            <select id="ts" name="ts"><option value="">Choose</option><option>1–50 people</option><option>51–200 people</option><option>201–500 people</option><option>500+ people</option></select></div>
+          <div class="f full" data-f="ms"><label for="ms">Message</label><textarea id="ms" name="ms" placeholder="Hi! We are Acme and we manage around 120 devices across two offices."></textarea></div>
+          <div class="f full" data-f="ag">
+            <label class="agree" for="ag"><input id="ag" type="checkbox"><span>I agree with ShiftDesk <a href="https://www.linkedin.com/in/guipx/" data-li>Privacy Policy</a></span></label>
+            <span class="msg" role="alert"></span>
+          </div>
+          <div class="sendrow"><button class="btn primary lg" type="submit">Send message</button></div>
+        </form>
+        <div class="done" id="done" role="status" tabindex="-1">
+          <h3 id="done-title">Thanks.</h3>
+          <p>This is a portfolio concept, so no message was sent. If you'd like to talk about the design, connect on LinkedIn.</p>
+          <a class="btn primary" href="https://www.linkedin.com/in/guipx/" data-li>Connect on LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- footer -->
+<footer class="foot">
+  <div class="in">
+    <div class="fcard rv">
+      <div class="ftop">
+        <div>
+          <a class="logo" href="#top"><span class="mark"><svg><use href="#i-layers"/></svg></span>ShiftDesk</a>
+          <p>Asset management for modern teams.</p>
+        </div>
+        <div class="soc">
+          <a href="https://www.linkedin.com/in/guipx/" data-li aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a2 2 0 1 1-4-.002A2 2 0 0 1 6.94 5zM7 8.48H3V21h4V8.48zm6.32 0H9.34V21h3.94v-6.57c0-3.66 4.77-4 4.77 0V21H22v-7.93c0-6.17-7.06-5.94-8.72-2.91l.04-1.68z"/></svg></a>
+          <a href="https://www.linkedin.com/in/guipx/" data-li aria-label="X, opens LinkedIn profile"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="https://www.linkedin.com/in/guipx/" data-li aria-label="Instagram, opens LinkedIn profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        </div>
+      </div>
+      <div class="fbot">
+        <span>© 2026 ShiftDesk. All rights reserved.</span>
+        <nav aria-label="Legal"><a href="https://www.linkedin.com/in/guipx/" data-li>Privacy Policy</a><a href="https://www.linkedin.com/in/guipx/" data-li>Terms &amp; Conditions</a></nav>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  /* One place to set the link used by every outbound link (Sign in, legal links, social icons). */
+  var LINKEDIN_URL = "https://www.linkedin.com/in/guipx/";
+  document.querySelectorAll("[data-li]").forEach(function (a) {
+    a.href = LINKEDIN_URL; a.target = "_blank"; a.rel = "noopener noreferrer";
+  });
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* announcement bar */
+  var bar = $("bar");
+  $("bar-close").addEventListener("click", function () {
+    bar.classList.add("gone");
+    setTimeout(function () { bar.hidden = true; }, 400);
+  });
+
+  /* nav: shadow on scroll + current section */
+  var nav = $("nav");
+  var spy = ["product", "how-it-works", "white-label", "contact"];
+  var spyLinks = {};
+  document.querySelectorAll("[data-spy]").forEach(function (a) { spyLinks[a.dataset.spy] = a; });
+  var hero = $("hv"), heroImg = $("hero-img"), ticking = false;
+  function onScroll() {
+    nav.classList.toggle("scrolled", window.scrollY > 8);
+    var cur = null;
+    spy.forEach(function (id) {
+      var el = $(id);
+      if (el && el.getBoundingClientRect().top <= 140) cur = id;
+    });
+    Object.keys(spyLinks).forEach(function (id) { spyLinks[id].classList.toggle("on", id === cur); });
+    if (!reduce) {
+      var r = hero.getBoundingClientRect(), vh = window.innerHeight;
+      var p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+      heroImg.style.setProperty("--py", ((0.5 - p) * 44).toFixed(1) + "px");
+    }
+    ticking = false;
+  }
+  window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  onScroll();
+
+  /* scroll reveal, once */
+  var rv = document.querySelectorAll(".rv");
+  if ("IntersectionObserver" in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("shown"); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    rv.forEach(function (el) { io.observe(el); });
+  } else { rv.forEach(function (el) { el.classList.add("shown"); }); }
+
+  /* product accordion with autoplay */
+  (function () {
+    var acc = $("acc"), items = Array.prototype.slice.call(acc.children);
+    var slides = Array.prototype.slice.call($("pframe").children);
+    var cur = 0, inView = false;
+    function show(i) {
+      cur = i;
+      items.forEach(function (li, k) {
+        var on = k === i;
+        li.classList.toggle("active", on);
+        li.querySelector("button").setAttribute("aria-expanded", on ? "true" : "false");
+        var bar = li.querySelector(".pb i");
+        if (on) { bar.style.animation = "none"; void bar.offsetWidth; bar.style.animation = ""; }
+      });
+      slides.forEach(function (s, k) { s.classList.toggle("on", k === i); });
+      if (typeof applyRate === "function") applyRate();
+    }
+    function applyRate() {
+      var bar = items[cur].querySelector(".pb i");
+      if (!bar.getAnimations) return;
+      bar.getAnimations().forEach(function (a) { a.playbackRate = hovering ? SLOW : 1; });
+    }
+    items.forEach(function (li, i) { li.querySelector("button").addEventListener("click", function () { show(i); }); });
+    if (reduce) { acc.classList.add("static"); return; }
+    acc.classList.add("paused");
+    items.forEach(function (li) {
+      li.querySelector(".pb i").addEventListener("animationend", function () { if (li.classList.contains("active")) show((cur + 1) % items.length); });
+    });
+    var hovering = false;
+    var SLOW = 0.85; /* progress runs at 85% speed while the pointer is over the component */
+    function sync() { acc.classList.toggle("paused", !inView); applyRate(); }
+    var prod = $("prod");
+    prod.addEventListener("mouseenter", function () { hovering = true; sync(); });
+    prod.addEventListener("mouseleave", function () { hovering = false; sync(); });
+    prod.addEventListener("focusin", function () { hovering = true; sync(); });
+    prod.addEventListener("focusout", function () { hovering = false; sync(); });
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) { inView = es[0].isIntersecting; sync(); }, { threshold: 0.35 }).observe(prod);
+    } else { inView = true; sync(); }
+  })();
+
+  /* photo strip: slow auto-scroll, loops, drag and swipe */
+  (function () {
+    var mq = $("mq"), kids = Array.prototype.slice.call(mq.children);
+    for (var c = 0; c < 2; c++) kids.forEach(function (k) { var d = k.cloneNode(true); d.setAttribute("aria-hidden", "true"); mq.appendChild(d); });
+    var dist = 0, pos = 0, paused = false, down = false, sx = 0, sl = 0;
+    function measure() { dist = mq.children[kids.length].offsetLeft - mq.children[0].offsetLeft; }
+    function wrap() { if (!dist) return; if (mq.scrollLeft >= dist * 2) mq.scrollLeft -= dist; else if (mq.scrollLeft <= 1) mq.scrollLeft += dist; }
+    function start() { measure(); mq.scrollLeft = dist; pos = mq.scrollLeft; }
+    start(); window.addEventListener("resize", function () { measure(); });
+    mq.addEventListener("scroll", function () { wrap(); if (paused) pos = mq.scrollLeft; }, { passive: true });
+    if (reduce) return;
+    var vis = true;
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { vis = es[0].isIntersecting; }).observe(mq);
+    function tick() {
+      if (!paused && !down && vis) { pos += 0.45; mq.scrollLeft = pos; if (Math.abs(mq.scrollLeft - pos) > 2) pos = mq.scrollLeft; }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    mq.addEventListener("mouseenter", function () { paused = true; });
+    mq.addEventListener("mouseleave", function () { paused = false; pos = mq.scrollLeft; });
+    mq.addEventListener("touchstart", function () { paused = true; }, { passive: true });
+    mq.addEventListener("touchend", function () { setTimeout(function () { paused = false; pos = mq.scrollLeft; }, 1800); }, { passive: true });
+    mq.addEventListener("pointerdown", function (e) { if (e.pointerType !== "mouse") return; down = true; sx = e.clientX; sl = mq.scrollLeft; mq.classList.add("drag"); });
+    window.addEventListener("pointermove", function (e) { if (!down) return; mq.scrollLeft = sl - (e.clientX - sx); });
+    window.addEventListener("pointerup", function () { if (!down) return; down = false; pos = mq.scrollLeft; mq.classList.remove("drag"); });
+  })();
+
+  /* white label: live preview */
+  (function () {
+    var COLORS = [["Indigo", "#4F46E5"], ["Emerald", "#047857"], ["Orange", "#C2410C"], ["Rose", "#BE123C"], ["Sky", "#0369A1"], ["Slate", "#334155"]];
+    var DEFAULT_NAME = "ShiftDesk";
+    var state = { name: "", color: COLORS[0][1], logo: null };
+    var stage = $("stage"), nameInput = $("name-input"), count = $("count"), logoInput = $("logo-input"), logoRemove = $("logo-remove");
+    var logoHint = $("logo-hint"), hintDefault = logoHint.textContent, logoPreview = $("logo-preview"), sideLogo = $("side-logo");
+    var swatches = $("swatches"), urlEl = $("url");
+
+    (function chart() {
+      var months = ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov"];
+      var a = [80, 86, 89, 93, 97, 98], st = [15, 14, 14, 15, 16, 18], of = [3, 4, 5, 6, 7, 8], nbv = [38, 42, 46, 54, 60, 66], s = "";
+      [0, 50, 100, 150].forEach(function (v) { var y = 170 - v; s += '<line x1="40" x2="548" y1="' + y + '" y2="' + y + '" stroke="#E6E8F0"/><text x="30" y="' + (y + 3) + '" text-anchor="end">' + v + '</text>'; });
+      months.forEach(function (m, i) {
+        var x = 62 + i * 82;
+        s += '<rect x="' + x + '" y="' + (170 - a[i]) + '" width="34" height="' + a[i] + '" fill="var(--brand)"/>';
+        s += '<rect x="' + x + '" y="' + (170 - a[i] - st[i]) + '" width="34" height="' + st[i] + '" fill="#CBD0DC"/>';
+        s += '<rect x="' + x + '" y="' + (170 - a[i] - st[i] - of[i]) + '" width="34" height="' + of[i] + '" rx="2" fill="color-mix(in srgb, var(--brand) 40%, white)"/>';
+        s += '<text x="' + (x + 17) + '" y="186" text-anchor="middle">' + m + '</text>';
+      });
+      var pts = nbv.map(function (v, i) { return (79 + i * 82) + "," + v; });
+      s += '<polyline points="' + pts.join(" ") + '" fill="none" stroke="#0F1222" stroke-width="1.6" stroke-dasharray="4 3"/>';
+      pts.forEach(function (p) { var c = p.split(","); s += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="2.5" fill="#0F1222"/>'; });
+      $("chart").innerHTML = s;
+    })();
+
+    COLORS.forEach(function (c, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "sw"; b.style.setProperty("--c", c[1]);
+      b.setAttribute("role", "radio"); b.setAttribute("aria-label", c[0]); b.setAttribute("aria-checked", i === 0 ? "true" : "false"); b.dataset.color = c[1];
+      b.addEventListener("click", function () { state.color = c[1]; render(); });
+      swatches.appendChild(b);
+    });
+    function paintLogo(el) {
+      el.innerHTML = "";
+      if (state.logo) { var img = document.createElement("img"); img.src = state.logo; img.alt = ""; el.appendChild(img); }
+      else if (state.name.trim()) { el.textContent = state.name.trim().charAt(0).toUpperCase(); }
+      else { el.innerHTML = '<svg><use href="#i-layers"/></svg>'; }
+    }
+    function slug(n) { return n.toLowerCase().replace(/[^a-z0-9]+/g, "") || "shiftdesk"; }
+    function render() {
+      var shown = state.name.trim() || DEFAULT_NAME;
+      stage.style.setProperty("--brand", state.color);
+      document.querySelectorAll("#stage [data-name]").forEach(function (el) { el.textContent = shown; });
+      count.textContent = state.name.length + "/20";
+      urlEl.textContent = "app." + slug(shown) + ".com";
+      paintLogo(logoPreview); paintLogo(sideLogo);
+      logoRemove.hidden = !state.logo;
+      swatches.querySelectorAll(".sw").forEach(function (b) { b.setAttribute("aria-checked", b.dataset.color === state.color ? "true" : "false"); });
+    }
+    nameInput.addEventListener("input", function () { state.name = nameInput.value; render(); });
+    logoInput.addEventListener("change", function () {
+      var f = logoInput.files && logoInput.files[0]; if (!f) return;
+      if (f.size > 2 * 1024 * 1024) { logoHint.textContent = "That file is larger than 2 MB. Choose a smaller image."; logoHint.classList.add("err"); logoInput.value = ""; return; }
+      var r = new FileReader();
+      r.onload = function () { state.logo = r.result; logoHint.textContent = hintDefault; logoHint.classList.remove("err"); render(); };
+      r.onerror = function () { logoHint.textContent = "We could not read that file. Try a different image."; logoHint.classList.add("err"); };
+      r.readAsDataURL(f);
+    });
+    logoRemove.addEventListener("click", function () { state.logo = null; logoInput.value = ""; logoHint.textContent = hintDefault; logoHint.classList.remove("err"); render(); });
+
+    var frame = $("frame"), inner = $("inner");
+    function fit() {
+      var avail = frame.clientWidth, w = 940, k = Math.min(1, avail * 0.96 / w);
+      inner.style.transform = "translate(" + (avail * 0.04) + "px," + (avail * 0.03) + "px) scale(" + k + ")";
+      var stacked = window.matchMedia("(max-width: 960px)").matches;
+      frame.style.minHeight = stacked ? Math.ceil(inner.offsetHeight * k * 0.8 + avail * 0.03) + "px" : "0px";
+    }
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(frame); else window.addEventListener("resize", fit);
+    render(); fit();
+  })();
+
+  /* contact form: validates in the page, sends nothing */
+  (function () {
+    var form = $("form"), done = $("done");
+    var rules = {
+      fn: function (v) { return v.trim() ? "" : "Enter your first name."; },
+      em: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "" : "Enter a valid email, like jane@company.com."; },
+      co: function (v) { return v.trim() ? "" : "Enter your company name."; },
+      ag: function (v, el) { return el.checked ? "" : "Accept the privacy policy to continue."; }
+    };
+    function check(key) {
+      var wrap = form.querySelector('[data-f="' + key + '"]'), el = $(key), msg = wrap.querySelector(".msg");
+      var err = rules[key](el.value || "", el);
+      wrap.classList.toggle("bad", !!err); msg.textContent = err; el.setAttribute("aria-invalid", err ? "true" : "false");
+      return !err;
+    }
+    Object.keys(rules).forEach(function (k) { $(k).addEventListener("input", function () { if (form.querySelector('[data-f="' + k + '"]').classList.contains("bad")) check(k); }); $(k).addEventListener("change", function () { if (form.querySelector('[data-f="' + k + '"]').classList.contains("bad")) check(k); }); });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var ok = true, first = null;
+      Object.keys(rules).forEach(function (k) { if (!check(k)) { ok = false; if (!first) first = $(k); } });
+      if (!ok) { first.focus(); return; }
+      $("done-title").textContent = "Thanks, " + $("fn").value.trim() + ".";
+      form.hidden = true; done.classList.add("show"); done.focus();
+    });
+  })();
+})();
+</script>
+</body>
+</html>
